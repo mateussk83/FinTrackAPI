@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface ProfileRepository extends MongoRepository<ProfileEntity, Integer> {
-    Optional<ProfileEntity> findByName(String name);
+    ProfileEntity findByName(String name);
 }
