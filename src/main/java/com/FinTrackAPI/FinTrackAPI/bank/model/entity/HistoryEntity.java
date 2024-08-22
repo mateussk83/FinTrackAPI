@@ -9,17 +9,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "transaction_entity")
-public class TransactionEntity {
+@Document(collection = "history_entity")
+public class HistoryEntity {
 
     @Id
     private Integer id;
-    private Double value;
-    private Integer profile;
+    private String description;
     private Date createdAt;
-    private Date updateAt;
+    private String type;
+    private Double value;
 }
