@@ -1,11 +1,10 @@
 package com.FinTrackAPI.FinTrackAPI.bank.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.http.HttpStatusCode;
 
 import java.util.Date;
 
@@ -17,9 +16,11 @@ import java.util.Date;
 public class TransactionEntity {
 
     @Id
-    private Integer id;
+    private ObjectId id;
     private Double value;
-    private Integer profile;
+    private ObjectId profile;
+    private String description;
+    private String type;
     private Date createdAt;
     private Date updateAt;
 }

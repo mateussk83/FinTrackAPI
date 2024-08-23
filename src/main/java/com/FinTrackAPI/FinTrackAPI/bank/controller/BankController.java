@@ -1,17 +1,18 @@
 package com.FinTrackAPI.FinTrackAPI.bank.controller;
 
 import com.FinTrackAPI.FinTrackAPI.bank.model.dto.TransactionRequestDto;
+import com.FinTrackAPI.FinTrackAPI.bank.model.dto.FindTransactionsRequestDto;
 import com.FinTrackAPI.FinTrackAPI.bank.service.TransactionService;
 import org.apache.coyote.BadRequestException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/bank")
 public class BankController {
 
+    @Autowired
     private TransactionService transactionService;
 
     @GetMapping("/extract")
@@ -19,14 +20,21 @@ public class BankController {
 
     }
 
-    @PostMapping("/transaction")
-    public void transaction(TransactionRequestDto transactionRequestDto) throws BadRequestException {
+    @PostMapping("/deposit")
+    public ResponseEntity<?> deposit(@RequestBody TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
-        transactionService.transaction(transactionRequestDto);
+        return transactionService.deposit(transactionRequestDto);
     }
 
-    @GetMapping("/extract/period")
-    public void extractByPeriod() {
+    @PostMapping("/withdraw")
+    public ResponseEntity<?> withdraw(@RequestBody TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
+        return transactionService.withdraw(transactionRequestDto);
+    }
+
+    @GetMapping("/find/period")
+    public void findByPeriod(@RequestBody FindTransactionsRequestDto findTransactionsRequestDto) {
+
+       transactionService.findTransactionsByDate(findTransactionsRequestDto);
     }
 }
