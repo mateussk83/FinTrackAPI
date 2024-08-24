@@ -21,5 +21,6 @@ public class ProfileEntity {
     private ObjectId id;
     @Indexed(unique = true)
     private String name;
+    private String status = "A";
     private Double balance;
 }

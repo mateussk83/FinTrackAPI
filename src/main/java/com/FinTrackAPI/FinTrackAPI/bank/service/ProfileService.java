@@ -25,4 +25,16 @@ public class ProfileService {
         profile = profileRepository.save(profile);
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
+
+    public ResponseEntity<ProfileEntity> deleteProfile(ProfileRequestDto profileRequestDto) {
+
+        ProfileEntity profile = profileRepository.findByName(profileRequestDto.getName());
+
+        if(profile != null || profile.getStatus().equals("A")) {
+            profile.setStatus("E");
+        }
+        profile = profileRepository.save(profile);
+        return new ResponseEntity<>(profile, HttpStatus.OK);
+    }
+
 }
