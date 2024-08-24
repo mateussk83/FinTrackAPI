@@ -17,9 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TransactionService {
@@ -32,14 +33,16 @@ public class TransactionService {
 
     public ResponseEntity<String> deposit(TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
-        ProfileEntity profile = profileRepository.findByName(transactionRequestDto.getPerson());
+        ProfileEntity profile = profileRepository.findByName(transactionRequestDto.getProfile());
 
         if(profile != null) {
             TransactionEntity transaction = TransactionEntity
                     .builder()
                     .value(transactionRequestDto.getValue())
                     .profile(profile.getId())
+                    .description(transactionRequestDto.getDescription())
                     .type(TypeTransactionConstants.DEPOSIT)
+                    .createdAt(new Date())
                     .build();
 
             transactionRepository.save(transaction);
@@ -56,23 +59,27 @@ public class TransactionService {
 
     public ResponseEntity<String> withdraw(TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
-        ProfileEntity profile = profileRepository.findByName(transactionRequestDto.getPerson());
+        ProfileEntity profile = profileRepository.findByName(transactionRequestDto.getProfile());
 
         if(profile != null) {
-            TransactionEntity transaction = TransactionEntity
-                    .builder()
-                    .value(transactionRequestDto.getValue())
-                    .profile(profile.getId())
-                    .type(TypeTransactionConstants.WITHDRAW)
-                    .build();
 
-            transactionRepository.save(transaction);
             if(profile.getBalance() > transactionRequestDto.getValue()) {
                 profile.setBalance(profile.getBalance() - transactionRequestDto.getValue());
             }
             else {
                 throw new BadRequestException("The withdrawal amount exceeds the account balance.");
             }
+
+            TransactionEntity transaction = TransactionEntity
+                    .builder()
+                    .value(transactionRequestDto.getValue())
+                    .description(transactionRequestDto.getDescription())
+                    .profile(profile.getId())
+                    .type(TypeTransactionConstants.WITHDRAW)
+                    .createdAt(new Date())
+                    .build();
+
+            transactionRepository.save(transaction);
             profileRepository.save(profile);
 
             DecimalFormat df = new DecimalFormat("#.##");
@@ -85,8 +92,6 @@ public class TransactionService {
 
     public ResponseEntity<List<TransactionResponseDto>> findTransactionsByDate(FindTransactionsRequestDto findTransactionsRequestDto) {
 
-
-
         if(findTransactionsRequestDto == null || findTransactionsRequestDto.getProfile() == null) {
             throw new IllegalArgumentException("Invalid Request");
         }
@@ -96,20 +101,24 @@ public class TransactionService {
             throw new IllegalArgumentException("Invalid Profile");
         }
 
-        LocalDate startDate;
-        LocalDate finalDate;
+        LocalDateTime startDateTime;
+        LocalDateTime finalDateTime;
 
         if(findTransactionsRequestDto.getStartDate() == null
                 && findTransactionsRequestDto.getFinalDate() == null) {
-            startDate = LocalDate.now().minus(3, ChronoUnit.MONTHS);
-            finalDate = LocalDate.now();
+            startDateTime = LocalDate.now().minusMonths(3).atStartOfDay();
+            finalDateTime = LocalDate.now().atStartOfDay().plusDays(1);
         } else {
-            startDate = DateUtils.validateAndConvertDate(findTransactionsRequestDto.getStartDate());
-            finalDate = DateUtils.validateAndConvertDate(findTransactionsRequestDto.getFinalDate());
+            startDateTime = DateUtils.convertToLocalDateTime(
+                    DateUtils.validateAndConvertDate(findTransactionsRequestDto.getStartDate())
+            );
+            finalDateTime = DateUtils.convertToLocalDateTime(
+                    DateUtils.validateAndConvertDate(findTransactionsRequestDto.getFinalDate())
+            );
         }
 
-
-        List<TransactionEntity> transactionList = transactionRepository.findByCreatedAtBetweenAndProfile(startDate, finalDate, profile.getId());
+        List<TransactionEntity> transactionList =
+                transactionRepository.findByCreatedAtBetweenAndProfile(startDateTime, finalDateTime, profile.getId());
 
         List<TransactionResponseDto> responseList = new ArrayList<>();
 
@@ -120,11 +129,11 @@ public class TransactionService {
                     .value("R$: " + transaction.getValue())
                     .description(transaction.getDescription())
                     .type(transaction.getType())
+                    .profile(profile.getName())
                     .build();
 
             responseList.add(response);
         }
-
         return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
 }

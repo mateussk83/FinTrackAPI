@@ -7,5 +7,5 @@ public class TransactionRequestDto {
 
     private String description;
     private Double value;
-    private String person;
+    private String profile;
 }

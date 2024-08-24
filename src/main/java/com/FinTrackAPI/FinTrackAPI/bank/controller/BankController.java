@@ -32,9 +32,9 @@ public class BankController {
         return transactionService.withdraw(transactionRequestDto);
     }
 
-    @GetMapping("/find/period")
-    public void findByPeriod(@RequestBody FindTransactionsRequestDto findTransactionsRequestDto) {
+    @GetMapping("/find")
+    public ResponseEntity<?> findByPeriod(@RequestBody FindTransactionsRequestDto findTransactionsRequestDto) {
 
-       transactionService.findTransactionsByDate(findTransactionsRequestDto);
+       return transactionService.findTransactionsByDate(findTransactionsRequestDto);
     }
 }

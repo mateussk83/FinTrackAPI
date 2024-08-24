@@ -22,5 +22,4 @@ public class TransactionEntity {
     private String description;
     private String type;
     private Date createdAt;
-    private Date updateAt;
 }
