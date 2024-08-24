@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 @Builder
 @Data
@@ -18,6 +19,7 @@ public class ProfileEntity {
 
     @Id
     private ObjectId id;
+    @Indexed(unique = true)
     private String name;
     private Double balance;
 }
