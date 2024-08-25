@@ -1,11 +1,10 @@
 package com.FinTrackAPI.FinTrackAPI.bank.service;
 
-import com.FinTrackAPI.FinTrackAPI.bank.model.dto.ProfileRequestDto;
+import com.FinTrackAPI.FinTrackAPI.bank.model.dto.ProfileCreateRequestDto;
+import com.FinTrackAPI.FinTrackAPI.bank.model.dto.ProfileDeleteRequestDto;
 import com.FinTrackAPI.FinTrackAPI.bank.model.entity.ProfileEntity;
 import com.FinTrackAPI.FinTrackAPI.bank.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,27 +13,27 @@ public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
 
-    public ResponseEntity<ProfileEntity> create(ProfileRequestDto profileRequestDto) {
+    public ProfileEntity create(ProfileCreateRequestDto profileXCreateRequestDto) {
 
         ProfileEntity profile = ProfileEntity
                 .builder()
-                .name(profileRequestDto.getName())
+                .username(profileXCreateRequestDto.getUsername())
                 .balance(0.00)
                 .build();
 
-        profile = profileRepository.save(profile);
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+        return profileRepository.save(profile);
     }
 
-    public ResponseEntity<ProfileEntity> deleteProfile(ProfileRequestDto profileRequestDto) {
+    public ProfileEntity deleteProfile(ProfileDeleteRequestDto profileDeleteRequestDto) {
 
-        ProfileEntity profile = profileRepository.findByName(profileRequestDto.getName());
+        ProfileEntity profile = profileRepository.findByUsername(profileDeleteRequestDto.getUsername());
 
         if(profile != null || profile.getStatus().equals("A")) {
             profile.setStatus("E");
         }
-        profile = profileRepository.save(profile);
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+
+        return profileRepository.save(profile);
     }
+
 
 }

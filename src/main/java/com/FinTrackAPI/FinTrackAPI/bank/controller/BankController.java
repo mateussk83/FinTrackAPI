@@ -15,11 +15,6 @@ public class BankController {
     @Autowired
     private TransactionService transactionService;
 
-    @GetMapping("/extract")
-    public void extract() {
-
-    }
-
     @PostMapping("/deposit")
     public ResponseEntity<?> deposit(@RequestBody TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
@@ -32,8 +27,8 @@ public class BankController {
         return transactionService.withdraw(transactionRequestDto);
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<?> findByPeriod(@RequestBody FindTransactionsRequestDto findTransactionsRequestDto) {
+    @GetMapping("/extract")
+    public ResponseEntity<?> extractByPeriod(@RequestBody FindTransactionsRequestDto findTransactionsRequestDto) {
 
        return transactionService.findTransactionsByDate(findTransactionsRequestDto);
     }

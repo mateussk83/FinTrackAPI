@@ -3,7 +3,7 @@ package com.FinTrackAPI.FinTrackAPI.bank.model.dto;
 import lombok.Data;
 
 @Data
-public class ProfileRequestDto {
+public class ProfileDeleteRequestDto {
 
-    private String name;
+    private String username;
 }

@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -33,7 +31,7 @@ public class TransactionService {
 
     public ResponseEntity<String> deposit(TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
-        ProfileEntity profile = profileRepository.findByName(transactionRequestDto.getProfile());
+        ProfileEntity profile = profileRepository.findByUsername(transactionRequestDto.getProfile());
 
         if(profile != null) {
             TransactionEntity transaction = TransactionEntity
@@ -59,7 +57,7 @@ public class TransactionService {
 
     public ResponseEntity<String> withdraw(TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
-        ProfileEntity profile = profileRepository.findByName(transactionRequestDto.getProfile());
+        ProfileEntity profile = profileRepository.findByUsername(transactionRequestDto.getProfile());
 
         if(profile != null) {
 
@@ -95,7 +93,7 @@ public class TransactionService {
         if(findTransactionsRequestDto == null || findTransactionsRequestDto.getProfile() == null) {
             throw new IllegalArgumentException("Invalid Request");
         }
-        ProfileEntity profile = profileRepository.findByName(findTransactionsRequestDto.getProfile());
+        ProfileEntity profile = profileRepository.findByUsername(findTransactionsRequestDto.getProfile());
 
         if(profile == null) {
             throw new IllegalArgumentException("Invalid Profile");
@@ -129,7 +127,7 @@ public class TransactionService {
                     .value("R$: " + transaction.getValue())
                     .description(transaction.getDescription())
                     .type(transaction.getType())
-                    .profile(profile.getName())
+                    .profile(profile.getUsername())
                     .build();
 
             responseList.add(response);
