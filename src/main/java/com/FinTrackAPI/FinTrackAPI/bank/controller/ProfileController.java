@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("profile")
-public class ProfileController {
+public class  ProfileController {
 
     @Autowired
     private ProfileService profileService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createProfile(@RequestBody ProfileCreateRequestDto profileXCreateRequestDto) {
-        var result = profileService.create(profileXCreateRequestDto);
+    public ResponseEntity<?> createProfile(@RequestBody ProfileCreateRequestDto profileCreateRequestDto) {
+        var result = profileService.create(profileCreateRequestDto);
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }

@@ -1,6 +1,6 @@
 package com.FinTrackAPI.FinTrackAPI.bank.service;
 
-import com.FinTrackAPI.FinTrackAPI.bank.model.TypeTransactionConstants;
+import com.FinTrackAPI.FinTrackAPI.bank.model.constants.TypeTransactionConstants;
 import com.FinTrackAPI.FinTrackAPI.bank.model.dto.TransactionRequestDto;
 import com.FinTrackAPI.FinTrackAPI.bank.model.dto.TransactionResponseDto;
 import com.FinTrackAPI.FinTrackAPI.bank.model.entity.ProfileEntity;

@@ -1,4 +1,4 @@
-package com.FinTrackAPI.FinTrackAPI.bank.model;
+package com.FinTrackAPI.FinTrackAPI.bank.model.constants;
 
 public class TypeTransactionConstants {
 
