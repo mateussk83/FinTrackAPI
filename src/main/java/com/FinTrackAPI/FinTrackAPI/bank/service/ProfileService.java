@@ -5,6 +5,7 @@ import com.FinTrackAPI.FinTrackAPI.bank.model.dto.ProfileDeleteRequestDto;
 import com.FinTrackAPI.FinTrackAPI.bank.model.entity.ProfileEntity;
 import com.FinTrackAPI.FinTrackAPI.bank.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,11 +14,17 @@ public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
 
-    public ProfileEntity create(ProfileCreateRequestDto profileXCreateRequestDto) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public ProfileEntity create(ProfileCreateRequestDto profileCreateRequestDto) {
+
+        String encodedPassword = passwordEncoder.encode(profileCreateRequestDto.getPassword());
 
         ProfileEntity profile = ProfileEntity
                 .builder()
-                .username(profileXCreateRequestDto.getUsername())
+                .username(profileCreateRequestDto.getUsername())
+                .password(encodedPassword)
                 .balance(0.00)
                 .build();
 
