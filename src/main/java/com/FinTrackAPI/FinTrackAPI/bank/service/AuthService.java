@@ -4,6 +4,7 @@ import com.FinTrackAPI.FinTrackAPI.bank.model.entity.ProfileEntity;
 import com.FinTrackAPI.FinTrackAPI.bank.repository.ProfileRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,8 +24,10 @@ public class AuthService {
     @Value("${secret.key}")
     private String secretKey;
 
-    public boolean authenticate(String username, String password) {
-        ProfileEntity profile = profileRepository.findByUsername(username);
+    public boolean authenticate(String username, String password) throws BadRequestException {
+
+        ProfileEntity profile = profileRepository.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException("Not found User with this username"));
         if (profile != null) {
             return passwordEncoder.matches(password, profile.getPassword());
         }

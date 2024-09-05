@@ -31,73 +31,63 @@ public class TransactionService {
 
     public ResponseEntity<String> deposit(TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
-        ProfileEntity profile = profileRepository.findByUsername(transactionRequestDto.getProfile());
+        ProfileEntity profile = profileRepository.findByUsername(transactionRequestDto.getProfile())
+                .orElseThrow(() -> new BadRequestException("Not found User with this username"));
+        TransactionEntity transaction = TransactionEntity
+                .builder()
+                .value(transactionRequestDto.getValue())
+                .profile(profile.getId())
+                .description(transactionRequestDto.getDescription())
+                .type(TypeTransactionConstants.DEPOSIT)
+                .createdAt(new Date())
+                .build();
 
-        if(profile != null) {
-            TransactionEntity transaction = TransactionEntity
-                    .builder()
-                    .value(transactionRequestDto.getValue())
-                    .profile(profile.getId())
-                    .description(transactionRequestDto.getDescription())
-                    .type(TypeTransactionConstants.DEPOSIT)
-                    .createdAt(new Date())
-                    .build();
+        transactionRepository.save(transaction);
+        profile.setBalance(profile.getBalance() + transactionRequestDto.getValue());
+        profileRepository.save(profile);
 
-            transactionRepository.save(transaction);
-            profile.setBalance(profile.getBalance() + transactionRequestDto.getValue());
-            profileRepository.save(profile);
-
-            DecimalFormat df = new DecimalFormat("#.##");
-            return new ResponseEntity<>("R$: " + df.format(profile.getBalance()), HttpStatus.OK);
-        }
-        else {
-            throw new BadRequestException("Não Encontrado Profile");
-        }
+        DecimalFormat df = new DecimalFormat("#.##");
+        return new ResponseEntity<>("R$: " + df.format(profile.getBalance()), HttpStatus.OK);
     }
 
     public ResponseEntity<String> withdraw(TransactionRequestDto transactionRequestDto) throws BadRequestException {
 
-        ProfileEntity profile = profileRepository.findByUsername(transactionRequestDto.getProfile());
 
-        if(profile != null) {
+        ProfileEntity profile = profileRepository.findByUsername(transactionRequestDto.getProfile())
+                .orElseThrow(() -> new BadRequestException("Not found User with this username"));
 
-            if(profile.getBalance() > transactionRequestDto.getValue()) {
-                profile.setBalance(profile.getBalance() - transactionRequestDto.getValue());
-            }
-            else {
-                throw new BadRequestException("The withdrawal amount exceeds the account balance.");
-            }
 
-            TransactionEntity transaction = TransactionEntity
-                    .builder()
-                    .value(transactionRequestDto.getValue())
-                    .description(transactionRequestDto.getDescription())
-                    .profile(profile.getId())
-                    .type(TypeTransactionConstants.WITHDRAW)
-                    .createdAt(new Date())
-                    .build();
-
-            transactionRepository.save(transaction);
-            profileRepository.save(profile);
-
-            DecimalFormat df = new DecimalFormat("#.##");
-            return new ResponseEntity<>("R$: " + df.format(profile.getBalance()), HttpStatus.OK);
+        if(profile.getBalance() > transactionRequestDto.getValue()) {
+            profile.setBalance(profile.getBalance() - transactionRequestDto.getValue());
         }
         else {
-            throw new BadRequestException("Profile Don't Exists");
+            throw new BadRequestException("The withdrawal amount exceeds the account balance.");
         }
+
+        TransactionEntity transaction = TransactionEntity
+                .builder()
+                .value(transactionRequestDto.getValue())
+                .description(transactionRequestDto.getDescription())
+                .profile(profile.getId())
+                .type(TypeTransactionConstants.WITHDRAW)
+                .createdAt(new Date())
+                .build();
+
+        transactionRepository.save(transaction);
+        profileRepository.save(profile);
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        return new ResponseEntity<>("R$: " + df.format(profile.getBalance()), HttpStatus.OK);
     }
 
-    public ResponseEntity<List<TransactionResponseDto>> findTransactionsByDate(FindTransactionsRequestDto findTransactionsRequestDto) {
+    public ResponseEntity<List<TransactionResponseDto>> findTransactionsByDate(FindTransactionsRequestDto findTransactionsRequestDto) throws BadRequestException {
 
         if(findTransactionsRequestDto == null || findTransactionsRequestDto.getProfile() == null) {
             throw new IllegalArgumentException("Invalid Request");
         }
-        ProfileEntity profile = profileRepository.findByUsername(findTransactionsRequestDto.getProfile());
 
-        if(profile == null) {
-            throw new IllegalArgumentException("Invalid Profile");
-        }
+        ProfileEntity profile = profileRepository.findByUsername(findTransactionsRequestDto.getProfile())
+                .orElseThrow(() -> new BadRequestException("Not found User with this username"));
 
         LocalDateTime startDateTime;
         LocalDateTime finalDateTime;

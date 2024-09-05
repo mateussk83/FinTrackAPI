@@ -16,19 +16,22 @@ public class BankController {
     private TransactionService transactionService;
 
     @PostMapping("/deposit")
-    public ResponseEntity<?> deposit(@RequestBody TransactionRequestDto transactionRequestDto) throws BadRequestException {
+    public ResponseEntity<?> deposit(@RequestBody TransactionRequestDto transactionRequestDto)
+            throws BadRequestException {
 
         return transactionService.deposit(transactionRequestDto);
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<?> withdraw(@RequestBody TransactionRequestDto transactionRequestDto) throws BadRequestException {
+    public ResponseEntity<?> withdraw(@RequestBody TransactionRequestDto transactionRequestDto)
+            throws BadRequestException {
 
         return transactionService.withdraw(transactionRequestDto);
     }
 
     @GetMapping("/extract")
-    public ResponseEntity<?> extractByPeriod(@RequestBody FindTransactionsRequestDto findTransactionsRequestDto) {
+    public ResponseEntity<?> extractByPeriod(@RequestBody FindTransactionsRequestDto findTransactionsRequestDto)
+            throws BadRequestException {
 
        return transactionService.findTransactionsByDate(findTransactionsRequestDto);
     }
